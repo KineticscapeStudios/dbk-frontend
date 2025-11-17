@@ -3,60 +3,77 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <div className="bg-text flex flex-col items-center text-bg-light">
-      <div className="bg-text w-full p-20 flex-row flex justify-around">
-        <div className=" flex flex-col gap-5 w-[30%]">
-          <h1 className="text-h2 font-bold">Get in touch</h1>
-          <p>
-            Shaam clothing pvt ltdG7, Badhe warehouse, Gate number 2, Opp
-            Angaraj Dabba, Kondhwa Budruk, Pune
-            411048.help@shauryasanadhya.com+91-9168076000Timing (Mon to Sat
-            10:30 AM to 6:30Pm)
-          </p>
-        </div>
-        <div className="text-bg-light flex flex-col gap-5">
-          <h1 className="text-h2 font-bold">Discover</h1>
-          <div className="flex flex-col gap-2">
-            <Link href={"/blog"}>About Us</Link>
-            <Link href={"/blog"}>Blogs</Link>
+    <footer className="bg-text text-bg-light">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="space-y-3">
+            <h1 className="text-h2 font-bold">Get in touch</h1>
+            <p className="whitespace-pre-line leading-relaxed">
+              Shaam Clothing Pvt. Ltd.
+              {"\n"}G7, Badhe Warehouse, Gate No. 2, Opp. Angaraj Dabba,
+              {"\n"}Kondhwa Budruk, Pune 411048
+              {"\n"}help@shauryasanadhya.com
+              {"\n"}+91-9168076000
+              {"\n"}Timing (Mon–Sat 10:30 AM–6:30 PM)
+            </p>
           </div>
-        </div>
-        <div className="text-bg-light flex flex-col gap-5">
-          <h1 className="text-h2 font-bold">Customer Policies</h1>
-          <div className="flex flex-col gap-2">
-            <Link href={"/blog"}>Exchange and return policy</Link>
-            <Link href={"/blog"}>Privacy Policy</Link>
-            <Link href={"/blog"}>Terms of Use</Link>
+
+          <div>
+            <h1 className="text-h2 font-bold mb-3">Discover</h1>
+            <nav className="flex flex-col gap-2">
+              <Link href="/about">About Us</Link>
+              <Link href="/blog">Blogs</Link>
+            </nav>
           </div>
-        </div>
-        <div className="text-bg-light flex flex-col gap-5">
-          <h1 className="text-h2 font-bold">Socials</h1>
-          <div className="flex flex-col gap-2">
-            <Link className="flex flex-row gap-2" href={"/blog"}>
-              <Image
-                src={"/SVGs/InstaIcon.svg"}
-                width={20}
-                height={20}
-                alt="instagram"
-              />{" "}
-              Instagram
-            </Link>
-            <Link className="flex flex-row gap-2" href={"/blog"}>
-              {" "}
-              <Image
-                src={"/SVGs/facebookIcon.svg"}
-                width={20}
-                height={20}
-                alt="facebook"
-              />
-              Facebook
-            </Link>
+
+          <div>
+            <h1 className="text-h2 font-bold mb-3">Customer Policies</h1>
+            <nav className="flex flex-col gap-2">
+              <Link href="/policies/returns">Exchange & Return Policy</Link>
+              <Link href="/policies/privacy">Privacy Policy</Link>
+              <Link href="/policies/terms">Terms of Use</Link>
+            </nav>
+          </div>
+
+          <div>
+            <h1 className="text-h2 font-bold mb-3">Socials</h1>
+            <nav className="flex flex-col gap-3">
+              <Link
+                className="flex items-center gap-2"
+                href="https://instagram.com"
+                target="_blank"
+              >
+                <Image
+                  src="/SVGs/InstaIcon.svg"
+                  width={20}
+                  height={20}
+                  alt="Instagram"
+                />
+                Instagram
+              </Link>
+              <Link
+                className="flex items-center gap-2"
+                href="https://facebook.com"
+                target="_blank"
+              >
+                <Image
+                  src="/SVGs/facebookIcon.svg"
+                  width={20}
+                  height={20}
+                  alt="Facebook"
+                />
+                Facebook
+              </Link>
+            </nav>
           </div>
         </div>
       </div>
-      <div>
-        <h2>copyright © 2025 dhagabykomal </h2>
+
+      <div className="border-t border-white/20">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 text-center text-sm">
+          copyright © 2025 dhagabykomal
+        </div>
       </div>
-    </div>
+    </footer>
   );
 }

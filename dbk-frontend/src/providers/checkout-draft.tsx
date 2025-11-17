@@ -5,6 +5,7 @@ import { createContext, useContext, useMemo, useRef, useState } from "react";
 import type { HttpTypes } from "@medusajs/types";
 import { sdk } from "@/lib/sdk";
 import { useCart } from "./cart";
+import { useCustomer } from "./customer";
 
 type DraftAddress = {
   first_name?: string;
@@ -15,7 +16,7 @@ type DraftAddress = {
   city?: string;
   province?: string;
   company?: string;
-  country_code?: string; // iso_2
+  country_code?: string; // iso_2 (e.g. "in")
   phone?: string;
 };
 
@@ -31,11 +32,37 @@ type Ctx = {
   setSelectedAddressId: (id?: string) => void;
   setManualAddress: (a: DraftAddress) => void;
 
-  /** Write email + address to cart just-in-time (e.g. before Pay Now or before fetching shipping options). */
+  /** Write email + address to cart just-in-time (e.g. before shipping fetch / Pay Now). */
   syncToCart: () => Promise<HttpTypes.StoreCart | undefined>;
 };
 
 const CheckoutDraftContext = createContext<Ctx | null>(null);
+
+// ---- helpers ----
+function coerceCountry(cc?: string, fallback?: string) {
+  return (cc || fallback || "in").toLowerCase(); // India-only default
+}
+
+function mapCustomerAddrToCartAddr(
+  src: NonNullable<HttpTypes.StoreCustomer["addresses"]>[number],
+  regionDefault?: string
+): DraftAddress {
+  return {
+    first_name: src.first_name || "",
+    last_name: src.last_name || "",
+    address_1: src.address_1 || "",
+    address_2: src.address_2 || "",
+    postal_code: src.postal_code || "",
+    city: src.city || "",
+    province: src.province || "",
+    company: src.company || "",
+    phone: src.phone || "",
+    country_code: coerceCountry(
+      src.country_code || undefined || "",
+      regionDefault
+    ),
+  };
+}
 
 export function CheckoutDraftProvider({
   children,
@@ -43,6 +70,7 @@ export function CheckoutDraftProvider({
   children: React.ReactNode;
 }) {
   const { cart, setCart } = useCart();
+  const { customer } = useCustomer();
   const [draft, setDraft] = useState<Draft>({});
   const syncing = useRef(false);
 
@@ -62,36 +90,50 @@ export function CheckoutDraftProvider({
 
   const syncToCart = async () => {
     if (!cart || syncing.current) return cart;
-    console.log("syncing");
     syncing.current = true;
 
     try {
-      // 1) email
       let next = cart;
+
+      // 1) Email
       if (draft.email && draft.email !== cart.email) {
         ({ cart: next } = await sdk.store.cart.update(cart.id, {
           email: draft.email,
         }));
       }
 
-      // 2) address: either chosen saved address (copy fields) or manual form
-      const makeAddress = async (): Promise<DraftAddress | undefined> => {
-        if (draft.selectedCustomerAddressId) {
-          try {
-            return undefined;
-          } catch {
-            return undefined;
+      // 2) Address
+      const regionDefault =
+        next.region?.countries?.[0]?.iso_2?.toLowerCase() || "in";
+
+      const selectAddress = (): DraftAddress | undefined => {
+        // (A) Logged-in: selected saved address
+        if (draft.selectedCustomerAddressId && customer?.addresses?.length) {
+          const found = customer.addresses.find(
+            (a) => a.id === draft.selectedCustomerAddressId
+          );
+          if (found) {
+            return mapCustomerAddrToCartAddr(found, regionDefault);
           }
         }
+
+        // (B) Manual address (guest or custom)
         if (draft.manualAddress) {
-          console.log(draft.manualAddress);
-          return draft.manualAddress;
+          const m = draft.manualAddress;
+          return {
+            ...m,
+            phone: (m.phone || "").trim(),
+            country_code: coerceCountry(m.country_code, regionDefault),
+          };
         }
+
+        // (C) Nothing to apply
         return undefined;
       };
 
-      const addr = await makeAddress();
-      console.log(addr);
+      const addr = selectAddress();
+
+      // Only push if minimal fields exist (prevents accidental wipes)
       if (
         addr &&
         addr.phone &&
@@ -99,8 +141,12 @@ export function CheckoutDraftProvider({
         addr.city &&
         addr.postal_code
       ) {
-        const payload = { shipping_address: addr, billing_address: addr };
-        ({ cart: next } = await sdk.store.cart.update(cart.id, payload));
+        // Always set both shipping and billing for simplicity
+        const payload = {
+          shipping_address: addr,
+          billing_address: addr,
+        };
+        ({ cart: next } = await sdk.store.cart.update(next.id, payload));
       }
 
       setCart(next);

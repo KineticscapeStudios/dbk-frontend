@@ -63,46 +63,83 @@ export default function ProductGallery({ images, videoUrl }: Props) {
 
   return (
     <>
-      {/* Layout: left column thumbnails, right main viewer */}
-      <div className="grid grid-cols-[88px_1fr] gap-3">
-        {/* LEFT: vertical thumbs */}
-        <div className="flex flex-col gap-2 pr-1">
-          {media.map((m, i) => {
-            const isActive = i === active;
-            return (
-              <button
-                key={(m.kind === "image" ? m.id : `video-${i}`) || i}
-                onClick={() => setActive(i)}
-                className={`relative w-[88px] rounded-lg border ${
-                  isActive ? "border-primary" : "border-border"
-                }`}
-                style={{ aspectRatio: "9 / 16" }}
-                aria-label={
-                  m.kind === "video" ? "Product video" : `Preview ${i + 1}`
-                }
-              >
-                {m.kind === "video" ? (
-                  <div className="absolute inset-0 grid place-items-center text-xs text-white bg-black/60 rounded-lg">
-                    ▶
-                  </div>
-                ) : (
-                  <Image
-                    src={m.url}
-                    alt="product thumbnail"
-                    fill
-                    className="object-cover"
-                    sizes="88px"
-                  />
-                )}
-              </button>
-            );
-          })}
+      {/* On mobile: thumbs row above viewer; on desktop: column left of viewer */}
+      <div className="grid grid-rows-[auto_1fr] gap-3 md:grid-rows-1 md:grid-cols-[96px_1fr]">
+        {/* THUMBS */}
+        <div className="order-1 md:order-none">
+          {/* mobile row */}
+          <div className="md:hidden flex flex-wrap gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {media.map((m, i) => {
+              const isActive = i === active;
+              return (
+                <button
+                  key={(m.kind === "image" ? m.id : `video-${i}`) || i}
+                  onClick={() => setActive(i)}
+                  className={`relative w-16 flex-shrink-0 rounded-lg border ${
+                    isActive ? "border-primary" : "border-border"
+                  }`}
+                  style={{ aspectRatio: "3/4" }}
+                  aria-label={
+                    m.kind === "video" ? "Product video" : `Preview ${i + 1}`
+                  }
+                >
+                  {m.kind === "video" ? (
+                    <div className="absolute inset-0 grid place-items-center text-xs text-white bg-black/60 rounded-lg">
+                      ▶
+                    </div>
+                  ) : (
+                    <Image
+                      src={m.url}
+                      alt="thumbnail"
+                      fill
+                      className="object-cover"
+                      sizes="64px"
+                    />
+                  )}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* desktop column */}
+          <div className="hidden md:flex md:flex-col md:gap-2 md:pr-1">
+            {media.map((m, i) => {
+              const isActive = i === active;
+              return (
+                <button
+                  key={(m.kind === "image" ? m.id : `video-${i}`) || i}
+                  onClick={() => setActive(i)}
+                  className={`relative w-24 rounded-lg border ${
+                    isActive ? "border-primary" : "border-border"
+                  }`}
+                  style={{ aspectRatio: "3/4" }}
+                  aria-label={
+                    m.kind === "video" ? "Product video" : `Preview ${i + 1}`
+                  }
+                >
+                  {m.kind === "video" ? (
+                    <div className="absolute inset-0 grid place-items-center text-xs text-white bg-black/60 rounded-lg">
+                      ▶
+                    </div>
+                  ) : (
+                    <Image
+                      src={m.url}
+                      alt="thumbnail"
+                      fill
+                      className="object-cover"
+                      sizes="96px"
+                    />
+                  )}
+                </button>
+              );
+            })}
+          </div>
         </div>
 
-        {/* RIGHT: 9:16 main viewer; click opens Lightbox */}
+        {/* VIEWER */}
         <div
           className="relative overflow-hidden rounded-xl border border-border bg-bg cursor-zoom-in"
-          style={{ aspectRatio: "9 / 16" }}
+          style={{ aspectRatio: "3/4" }}
           onClick={() => setOpen(true)}
           role="button"
           aria-label="Open product viewer"
@@ -128,33 +165,27 @@ export default function ProductGallery({ images, videoUrl }: Props) {
         </div>
       </div>
 
-      {/* Lightbox modal */}
+      {/* Lightbox */}
       {typeof window !== "undefined" && (
         <Lightbox
           open={open}
           close={() => setOpen(false)}
           slides={slides}
           index={active}
-          // Keep gallery index in sync with thumbs
           on={{ view: ({ index }) => setActive(index) }}
-          // Behavior
           carousel={{ finite: true }}
           animation={{ fade: 250 }}
           controller={{ closeOnBackdropClick: true }}
-          render={{}} // default UI is good
           plugins={[Zoom, Thumbnails, Video, Fullscreen]}
-          // Zoom plugin config: single-click toggles zoom; drag to pan
           zoom={{
             maxZoomPixelRatio: 2.5,
             zoomInMultiplier: 1.4,
-            doubleTapDelay: 250, // double-click/ double-tap also zooms
-            // By default: click zooms, click again resets; drag pans when zoomed
-            // You can tweak more options if needed
+            doubleTapDelay: 250,
           }}
           thumbnails={{
             position: "bottom",
             width: 100,
-            height: 100 * (9 / 16),
+            height: 100 * (3 / 4),
             border: 1,
           }}
         />

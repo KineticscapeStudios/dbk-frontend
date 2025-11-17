@@ -105,6 +105,10 @@ function AddressForm() {
     phone: "",
     countryCode: "",
   });
+  const defaultCountry =
+    countries.find((c) => c.iso_2?.toLowerCase() === "in")?.iso_2 ||
+    countries[0]?.iso_2 ||
+    "in";
 
   return (
     <div className="mt-3 grid grid-cols-1 gap-3">

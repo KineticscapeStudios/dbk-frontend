@@ -38,7 +38,7 @@ export default function VideoCard({
   return (
     <Link
       href={href}
-      className={`block  bg-bg shadow-sm hover:shadow-md transition ${className}`}
+      className={`block rounded-2xl bg-bg shadow-sm transition hover:shadow-md ${className}`}
       aria-label={title}
     >
       <div className="relative overflow-hidden rounded-2xl aspect-[3/4]">
@@ -56,16 +56,16 @@ export default function VideoCard({
       </div>
 
       <div className="p-3">
-        <h3 className="text-normal leading-normal font-[600] text-text truncate">
+        <h3 className="text-normal leading-normal font-semibold text-text line-clamp-2">
           {title}
         </h3>
-        <div className="flex flex-row gap-2">
-          <div className="mt-1 text-text font-[700]">
+        <div className="mt-1 flex flex-wrap items-center gap-2">
+          <div className="font-semibold text-text">
             {currency}
             {new Intl.NumberFormat("en-IN").format(price)}
           </div>
           {compareAtPrice && compareAtPrice > price && (
-            <div className="flex flex-row items-center gap-2 font-normal">
+            <div className="flex flex-row gap-2 text-text-mutable line-through decoration-2 decoration-dashed decoration-[var(--text-mutable)]">
               <span
                 className="
               text-text-mutable line-through decoration-2 decoration-dashed
@@ -73,10 +73,10 @@ export default function VideoCard({
             "
               >
                 {currency}
-                {formatNumber(compareAtPrice)}
+                {new Intl.NumberFormat("en-IN").format(compareAtPrice)}
               </span>
               <div className="">
-                <span className="inline-grid h-10 w-12 place-items-center rounded-full bg-primary text-white">
+                <span className="inline-grid h-7 w-10 sm:h-8 sm:w-12 place-items-center rounded-full bg-primary text-white text-xs sm:text-sm">
                   -{percentOff}
                 </span>
               </div>

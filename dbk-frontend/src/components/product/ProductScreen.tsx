@@ -107,31 +107,54 @@ export default function ProductScreen({ handle }: Props) {
     };
   }, [primaryCategoryId, product?.id, cartId]);
 
-  if (loading)
-    return <div className="p-6 text-sm text-text-mutable">Loading…</div>;
-  if (!product)
+  if (loading) {
+    // simple skeleton
+    return (
+      <div className="max-w-6xl mx-auto p-4 md:p-8 animate-pulse">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div
+            className="rounded-xl bg-bg border border-border"
+            style={{ aspectRatio: "9/16" }}
+          />
+          <div className="space-y-4">
+            <div className="h-7 w-2/3 rounded bg-bg-dark" />
+            <div className="h-5 w-1/3 rounded bg-bg-dark" />
+            <div className="h-10 w-1/2 rounded bg-bg-dark" />
+            <div className="h-24 w-full rounded bg-bg-dark" />
+            <div className="h-12 w-full rounded bg-bg-dark" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!product) {
     return (
       <div className="p-6 text-sm text-text-mutable">Product not found.</div>
     );
+  }
 
   const videoUrlAbs = toAbsoluteMediaUrl((product.metadata as any)?.video_url);
   console.log(videoUrlAbs);
   return (
     <div className="max-w-6xl mx-auto p-4 md:p-8">
+      {/* GRID:
+           - mobile: gallery on top; details under
+           - md+: 2 columns, with details sticky for better UX */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Left: gallery */}
         <ProductGallery images={product.images || []} videoUrl={videoUrlAbs} />
 
         {/* Right: details */}
-        <div>
-          <div className="flex flex-col">
+        <div className="md:sticky md:top-24 md:self-start">
+          <div className="flex flex-col gap-2">
             <h1 className="text-2xl md:text-3xl font-semibold text-text">
               {product.title}
             </h1>
-            <div>{productCategory}</div>
+            <div className="text-sm text-text-mutable">{productCategory}</div>
           </div>
 
-          <div className="mt-2">
+          <div className="mt-3">
             <PriceBlock product={product} selectedVariant={selectedVariant} />
           </div>
 
@@ -150,7 +173,7 @@ export default function ProductScreen({ handle }: Props) {
               productId={product.id}
               variantId={selectedVariant?.id}
               disabled={!selectedVariant || !cartId}
-              cartId={cartId}
+              // cartId={cartId}
             />
           </div>
 
@@ -170,6 +193,15 @@ export default function ProductScreen({ handle }: Props) {
           You may also like
         </h2>
         <RelatedProducts products={related} />
+      </div>
+      <div className="md:hidden sticky bottom-0 inset-x-0 z-40 border-t border-border bg-bg/90 backdrop-blur px-4 py-3">
+        <div className="max-w-6xl mx-auto">
+          <AddToCartButton
+            productId={product.id}
+            variantId={selectedVariant?.id}
+            disabled={!selectedVariant || !cartId}
+          />
+        </div>
       </div>
     </div>
   );

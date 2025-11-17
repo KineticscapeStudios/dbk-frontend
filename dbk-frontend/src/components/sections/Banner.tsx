@@ -29,7 +29,7 @@ export default function Banners({
   collectionHandle,
   intervalMs = 3500,
   fadeMs = 700,
-  aspectClassName = "pt-[38%] sm:pt-[32%] md:pt-[28%]",
+  aspectClassName = "pt-[56%] sm:pt-[42%] md:pt-[34%] lg:pt-[30%] xl:pt-[28%]",
   className = "",
   withDots = true,
 }: Props) {
@@ -148,21 +148,19 @@ export default function Banners({
       onBlur={() => setPaused(false)}
     >
       <div className="relative w-full overflow-hidden bg-bg-dark">
-        {/* Aspect box controls height; full width by default */}
         <div className={aspectClassName} />
-
-        {/* Slides */}
         <div className="absolute inset-0">
           {items.map((b, i) => {
             const visible = i === index;
-            const pe = visible ? "pointer-events-auto" : "pointer-events-none";
-            const content = (
+            const Img = (
               <Image
                 key={b.key}
                 src={b.src!}
                 alt={b.alt ?? "Banner"}
                 fill
-                sizes="100vw"
+                sizes="(max-width: 640px) 100vw,
+                       (max-width: 1024px) 100vw,
+                       100vw"
                 priority={i === 0}
                 className={`object-cover transition-opacity ease-in-out ${
                   visible ? "opacity-100" : "opacity-0"
@@ -175,35 +173,33 @@ export default function Banners({
                 key={b.key}
                 href={b.href}
                 aria-label={b.alt ?? "Banner link"}
-                className={`absolute inset-0 ${pe}`}
+                className={`absolute inset-0 ${
+                  visible ? "pointer-events-auto" : "pointer-events-none"
+                }`}
                 tabIndex={visible ? 0 : -1}
               >
-                {content}
+                {Img}
               </Link>
             ) : (
               <div key={b.key} className="absolute inset-0">
-                {content}
+                {Img}
               </div>
             );
           })}
         </div>
 
-        {/* Dots */}
-        {withDots && canCycle && (
+        {withDots && items.length > 1 && (
           <div className="pointer-events-auto absolute inset-x-0 bottom-2 flex items-center justify-center gap-2">
-            {items.map((b, i) => {
-              const active = i === index;
-              return (
-                <button
-                  key={b.key}
-                  aria-label={`Go to slide ${i + 1}`}
-                  onClick={() => setIndex(i)}
-                  className={`h-2.5 w-2.5 rounded-full border border-border transition ${
-                    active ? "bg-primary" : "bg-bg/70 hover:bg-bg"
-                  }`}
-                />
-              );
-            })}
+            {items.map((b, i) => (
+              <button
+                key={b.key}
+                aria-label={`Go to slide ${i + 1}`}
+                onClick={() => setIndex(i)}
+                className={`h-2.5 w-2.5 rounded-full border border-border transition ${
+                  i === index ? "bg-primary" : "bg-bg/70 hover:bg-bg"
+                }`}
+              />
+            ))}
           </div>
         )}
       </div>

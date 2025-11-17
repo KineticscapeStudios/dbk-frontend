@@ -135,7 +135,7 @@ export default function TopPicks({
   const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
 
   return (
-    <section className={`rounded-2xl p-4 sm:p-6 ${className} m-10 w-[90%]`}>
+    <section className={`py-4 sm:py-6 ${className}`}>
       <div className="mb-4 flex items-center gap-2">
         <h2 className="text-h2 leading-h2 text-text font-normal">
           Top Picks <span className="font-pacifico">For You</span>
@@ -143,17 +143,15 @@ export default function TopPicks({
 
         <div className="ml-auto hidden items-center gap-2 md:flex">
           <button
-            onClick={scrollPrev}
+            onClick={() => emblaApi?.scrollPrev()}
             aria-label="Previous"
-            title="Previous"
             className="grid h-10 w-10 place-items-center rounded-full border border-border bg-bg text-text hover:bg-bg-dark/60 focus:outline-none focus:ring-2 focus:ring-primary/30"
           >
             <ChevronLeftIcon className="h-5 w-5" />
           </button>
           <button
-            onClick={scrollNext}
+            onClick={() => emblaApi?.scrollNext()}
             aria-label="Next"
-            title="Next"
             className="grid h-10 w-10 place-items-center rounded-full border border-border bg-bg text-text hover:bg-bg-dark/60 focus:outline-none focus:ring-2 focus:ring-primary/30"
           >
             <ChevronRightIcon className="h-5 w-5" />
@@ -161,23 +159,16 @@ export default function TopPicks({
         </div>
       </div>
 
-      {/* Desktop carousel */}
+      {/* desktop carousel */}
       <div className="hidden md:block">
-        <div className="overflow-x-hidden py-4" ref={viewportRef}>
-          <div className="flex gap-2 flex-nowrap">
+        <div ref={viewportRef} className="overflow-x-hidden py-2 sm:py-4">
+          <div className="flex gap-3">
             {(items || []).map((p, i) => (
               <div
                 key={p.id ?? i}
-                className="min-w-0 flex-[0_0_25%] lg:flex-[0_0_25%] xl:flex-[0_0_20%]"
+                className="min-w-0 flex-[0_0_33%] lg:flex-[0_0_25%] xl:flex-[0_0_20%]"
               >
-                <ProductCard
-                  href={p.href}
-                  images={p.images}
-                  title={p.title}
-                  price={p.price}
-                  compareAtPrice={p.compareAtPrice}
-                  currency={p.currency ?? "₹"}
-                />
+                <ProductCard {...p} />
               </div>
             ))}
             {!items.length && !loading && (
@@ -187,18 +178,10 @@ export default function TopPicks({
         </div>
       </div>
 
-      {/* Mobile grid */}
-      <div className="grid grid-cols-2 gap-3 md:hidden ">
+      {/* mobile grid */}
+      <div className="grid grid-cols-2 gap-3 md:hidden">
         {(items || []).map((p, i) => (
-          <ProductCard
-            key={p.id ?? i}
-            href={p.href}
-            images={p.images}
-            title={p.title}
-            price={p.price}
-            compareAtPrice={p.compareAtPrice}
-            currency={p.currency ?? "₹"}
-          />
+          <ProductCard key={p.id ?? i} {...p} />
         ))}
         {!items.length && !loading && (
           <div className="text-sm text-text-mutable px-2 col-span-2">

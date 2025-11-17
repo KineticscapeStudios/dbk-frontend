@@ -58,22 +58,20 @@ export default function VideoCardsSection({
   const items = useMemo(() => videos ?? [], [videos]);
 
   return (
-    <section className={`p-4 sm:p-6 ${className} max-w-6xl m-auto`}>
+    <section className={`py-4 sm:py-6 ${className}`}>
       <div className="relative">
         {/* Left button */}
         <button
           onClick={scrollPrev}
           aria-label="Previous"
-          className="absolute left-2 top-1/2 -translate-y-1/2 z-10 
-      grid h-15 w-10 place-items-center rounded-xl border border-border 
-      bg-black hover:bg-bg-dark/60 focus:outline-none focus:ring-2 focus:ring-primary/30 transparent opacity-50 cursor-pointer"
+          className="hidden md:grid absolute left-2 top-1/2 -translate-y-1/2 z-10 h-10 w-10 place-items-center rounded-full border border-border bg-bg/80 hover:bg-bg focus:outline-none focus:ring-2 focus:ring-primary/30"
         >
           <ChevronLeftIcon className="h-10 w-10 text-white" />
         </button>
 
         {/* Carousel viewport */}
         <div
-          className="overflow-x-hidden py-4"
+          className="overflow-x-hidden py-2 sm:py-4"
           ref={viewportRef}
           aria-roledescription="carousel"
         >
@@ -83,9 +81,13 @@ export default function VideoCardsSection({
               return (
                 <div
                   key={v.id ?? i}
-                  className={`min-w-0 transition mx-2
-              flex-[0_0_85%] sm:flex-[0_0_60%] md:flex-[0_0_40%] lg:flex-[0_0_30%]
-              opacity-100`}
+                  className={`min-w-0 mx-2
+                  flex-[0_0_88%]
+                  xs:flex-[0_0_78%]
+                  sm:flex-[0_0_60%]
+                  md:flex-[0_0_45%]
+                  lg:flex-[0_0_33%]
+                  xl:flex-[0_0_25%]`}
                 >
                   <VideoCard
                     href={v.href}
@@ -106,9 +108,7 @@ export default function VideoCardsSection({
         <button
           onClick={scrollNext}
           aria-label="Next"
-          className="absolute right-2 top-1/2 -translate-y-1/2 z-10 
-      grid h-15 w-10 place-items-center rounded-xl border border-border 
-      bg-black hover:bg-bg-dark/60 focus:outline-none focus:ring-2 focus:ring-primary/30 transparent opacity-50 cursor-pointer"
+          className="hidden md:grid absolute right-2 top-1/2 -translate-y-1/2 z-10 h-10 w-10 place-items-center rounded-full border border-border bg-bg/80 hover:bg-bg focus:outline-none focus:ring-2 focus:ring-primary/30"
         >
           <ChevronRightIcon className="h-10 w-10 text-white" />
         </button>

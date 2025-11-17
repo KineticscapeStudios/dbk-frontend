@@ -132,20 +132,20 @@ export default function TrendingNow({
 
   return (
     <section
-      className={`rounded-2xl border border-border bg-bg-dark p-4 sm:p-6 ${className} m-10 w-[90%]`}
+      className={`rounded-2xl border border-border bg-bg-dark py-4 sm:py-6 ${className}`}
     >
-      {/* Header */}
-      <div className="mb-4 flex items-center gap-2 ">
+      <div className="mb-4 flex items-center gap-2">
         <h2 className="text-h2 leading-h2 text-text font-normal">
-          Trending <span className="font-pacifico">Now</span>
+          {title.split(" ")[0]}{" "}
+          <span className="font-pacifico">
+            {title.split(" ").slice(1).join(" ")}
+          </span>
         </h2>
 
-        {/* Desktop controls (top-right) */}
         <div className="ml-auto hidden items-center gap-2 md:flex">
           <button
             onClick={scrollPrev}
             aria-label="Previous"
-            title="Previous"
             className="grid h-10 w-10 place-items-center rounded-full border border-border bg-bg text-text hover:bg-bg-dark/60 focus:outline-none focus:ring-2 focus:ring-primary/30"
           >
             <ChevronLeftIcon className="h-5 w-5" />
@@ -153,7 +153,6 @@ export default function TrendingNow({
           <button
             onClick={scrollNext}
             aria-label="Next"
-            title="Next"
             className="grid h-10 w-10 place-items-center rounded-full border border-border bg-bg text-text hover:bg-bg-dark/60 focus:outline-none focus:ring-2 focus:ring-primary/30"
           >
             <ChevronRightIcon className="h-5 w-5" />
@@ -161,49 +160,34 @@ export default function TrendingNow({
         </div>
       </div>
 
-      {/* Desktop: carousel */}
+      {/* desktop carousel */}
       <div className="hidden md:block">
         <div
-          className="overflow-x-hidden overflow-y-visible py-4"
           ref={viewportRef}
+          className="overflow-x-hidden overflow-y-visible py-2 sm:py-4"
         >
-          <div className="flex gap-4">
+          <div className="flex gap-3">
             {(items || []).map((p, i) => (
               <div
                 key={p.id ?? i}
                 className="
                   min-w-0
-                  flex-[0_0_15%]   /* 4 per view on md+ */
-                  lg:flex-[0_0_20%]
-                  xl:flex-[0_0_20%] /* 5 per view on xl if space allows */
+                  flex-[0_0_33%]
+                  lg:flex-[0_0_25%]
+                  xl:flex-[0_0_20%]
                 "
               >
-                <ProductCard
-                  href={p.href}
-                  images={p.images}
-                  title={p.title}
-                  price={p.price}
-                  compareAtPrice={p.compareAtPrice}
-                  currency={p.currency ?? "₹"}
-                />
+                <ProductCard {...p} />
               </div>
             ))}
           </div>
         </div>
       </div>
 
-      {/* Mobile: wrapped grid (2 per row) */}
+      {/* mobile grid */}
       <div className="grid grid-cols-2 gap-3 md:hidden">
         {(items || []).map((p, i) => (
-          <ProductCard
-            key={p.id ?? i}
-            href={p.href}
-            images={p.images}
-            title={p.title}
-            price={p.price}
-            compareAtPrice={p.compareAtPrice}
-            currency={p.currency ?? "₹"}
-          />
+          <ProductCard key={p.id ?? i} {...p} />
         ))}
       </div>
     </section>

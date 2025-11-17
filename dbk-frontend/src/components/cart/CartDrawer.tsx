@@ -111,7 +111,9 @@ export default function CartDrawer() {
                   </li>
                 );
               })}
-              <CartPromotions />
+              <div className="px-4">
+                <CartPromotions />
+              </div>
             </ul>
           )}
         </div>
@@ -138,7 +140,10 @@ export default function CartDrawer() {
             className="mt-2 w-full font-bold text-h2 rounded-lg bg-primary px-4 py-3 text-bg-light disabled:opacity-60"
             disabled={!cart || !cart.items?.length}
             // TODO: navigate to /checkout when ready
-            onClick={() => router.push("/checkout/confirm")}
+            onClick={() => {
+              close();
+              router.push("/checkout/confirm");
+            }}
           >
             Confirm Order
           </button>
